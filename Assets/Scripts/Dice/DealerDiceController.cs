@@ -4,15 +4,26 @@ using UnityEngine;
 
 public class DealerDiceController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    private static DealerDiceController instance;
+    public static DealerDiceController Instance {
+        get { return instance; }
     }
+    private void Awake() {
+        if (instance != null && instance != this) {
+            Destroy(this.gameObject);
+            return;
+        } else {
+            instance = this;
+        }
+    }
+    [SerializeField]
+    private DiceController[] diceSet;
+    [SerializeField]
+    private int[] value;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void Roll() {
+        for (int i = 0; i < diceSet.Length; i++) {
+            diceSet[i].SetNumber(value[i]);
+        }
     }
 }

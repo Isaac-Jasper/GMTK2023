@@ -22,7 +22,9 @@ public class InputManager : MonoBehaviour
     public event ReverseRollPerformed OnReverseRollPerformed;
 
     private Input input;
-
+    public bool lockClick { get; set; }
+    public bool lockRoll { get; set; }
+    public bool lockReverseRoll { get; set; }
     private void Awake() {
         if (instance != null && instance != this) {
             Destroy(this.gameObject);
@@ -30,6 +32,7 @@ public class InputManager : MonoBehaviour
         } else {
             instance = this;
         }
+
         input = new Input();
 
         input.Player.Click.started += Click_Started;
@@ -40,18 +43,22 @@ public class InputManager : MonoBehaviour
 
     private void Click_Started(InputAction.CallbackContext ctx) {
         //Debug.Log("click started");
+        if (lockClick) return;
         OnClickStarted?.Invoke(input.Player.MousePosition.ReadValue<Vector2>(), (float)ctx.startTime);
     }
     private void Click_Ended(InputAction.CallbackContext ctx) {
         //Debug.Log("click ended");
+        if (lockClick) return;
         OnClickEnded?.Invoke(input.Player.MousePosition.ReadValue<Vector2>(), (float)ctx.startTime);
     }
     private void Roll_Performed(InputAction.CallbackContext ctx) {
         //Debug.Log("Roll Performed");
+        if (lockRoll) return;
         OnRollPerformed?.Invoke();
     }
     private void Reverse_Roll_Performed(InputAction.CallbackContext ctx) {
         //Debug.Log("Roll Performed");
+        if (lockReverseRoll) return;
         OnReverseRollPerformed?.Invoke();
     }
     private void OnEnable() {
@@ -59,5 +66,10 @@ public class InputManager : MonoBehaviour
     }
     private void OnDisable() {
         input.Player.Disable();
+    }
+    public void lockAll(bool locks) {
+        lockClick = locks;
+        lockRoll = locks;
+        lockReverseRoll = locks;
     }
 }
